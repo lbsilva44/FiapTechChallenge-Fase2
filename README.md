@@ -223,7 +223,7 @@ Criados automaticamente no primeiro `Run()`:
 
 ### Admin  
 - **Email**: `admin@fcg.com`  
-- **Senha**: `Admin@123!`
+- **Senha**: `Admin@123456789`
 
 ### Usuário  
 - **Email**: `user@fcg.com`  
