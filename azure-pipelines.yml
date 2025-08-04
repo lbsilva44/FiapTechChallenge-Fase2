@@ -1,0 +1,112 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  name: Default
+  demands:
+    - agent.name -equals agente-leo
+
+variables:
+- group: GitHubSecrets
+
+- name: dockerImageName
+  value: 'fcg-app'
+- name: dockerHubUser
+  value: 'lbsilva44'
+- name: dockerHubRepo
+  value: 'fcg-app'
+- name: tag
+  value: 'latest'
+
+steps:
+# 🔧 Instalar .NET SDK
+- task: UseDotNet@2
+  displayName: 'Instalar .NET 8 SDK'
+  inputs:
+    packageType: 'sdk'
+    version: '8.0.x'
+
+# 📦 Restaurar dependências
+- task: DotNetCoreCLI@2
+  displayName: 'Restaurar pacotes'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+
+# 🏗️ Buildar solução
+- task: DotNetCoreCLI@2
+  displayName: 'Buildar projeto'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration Release'
+
+# 🧪 Executar testes automatizados
+- task: DotNetCoreCLI@2
+  displayName: 'Executar Testes Automatizados'
+  inputs:
+    command: 'test'
+    projects: '**/*Tests.csproj'
+    arguments: '--configuration Release --logger trx'
+    publishTestResults: true
+
+# 🔐 Login Docker Hub
+- task: Docker@2
+  displayName: 'Login no Docker Hub'
+  inputs:
+    command: 'login'
+    containerRegistry: 'DockerHubServiceConnection'
+
+# 🐳 Build + Push imagem Docker (em um passo)
+- task: Docker@2
+  displayName: 'Buildar e Pushar imagem Docker'
+  inputs:
+    command: 'buildAndPush'
+    repository: '$(dockerHubUser)/$(dockerHubRepo)'
+    Dockerfile: 'Dockerfile'
+    buildContext: '$(Build.SourcesDirectory)'
+    tags: |
+      $(tag)
+
+# 🏷️ Taguear imagem como stable
+- script: |
+    docker tag $(dockerHubUser)/$(dockerHubRepo):latest $(dockerHubUser)/$(dockerHubRepo):stable
+  displayName: 'Taguear imagem como stable'
+  condition: succeeded()
+
+# 📤 Push da imagem stable
+- task: Docker@2
+  displayName: 'Push imagem stable'
+  condition: succeeded()
+  inputs:
+    command: 'push'
+    repository: '$(dockerHubUser)/$(dockerHubRepo)'
+    tags: |
+      stable
+
+# 📦 Deploy para Azure Web App
+- task: AzureWebAppContainer@1
+  displayName: 'Deploy para Azure Web App'
+  inputs:
+    azureSubscription: 'AzureServiceConnection'
+    appName: 'fcg-Tech-Challenge'
+    containers: '$(dockerHubUser)/$(dockerHubRepo):$(tag)'
+    containerCommand: ''
+
+# 🔁 Rollback automático se o deploy falhar
+- task: AzureCLI@2
+  displayName: 'Rollback: Restaurar imagem stable se o deploy falhar'
+  condition: failed()
+  inputs:
+    azureSubscription: 'AzureServiceConnection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "⚠️ Deploy falhou. Fazendo rollback para imagem estável..."
+      az webapp config container set \
+        --name fcg-Tech-Challenge \
+        --resource-group fcg-grupo \
+        --docker-custom-image-name $(dockerHubUser)/$(dockerHubRepo):stable \
+        --docker-registry-server-url https://index.docker.io
