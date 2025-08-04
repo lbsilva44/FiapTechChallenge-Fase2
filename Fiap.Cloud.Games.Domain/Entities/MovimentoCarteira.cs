@@ -4,7 +4,8 @@ namespace Fiap.Cloud.Games.Domain.Entities;
 public enum TipoMovimentoCarteira
 {
     Deposito = 1,
-    Retirada = 2
+    Retirada = 2,
+    RecebidoGratis = 3
 }
 
 public class MovimentoCarteira

@@ -10,8 +10,7 @@ public class JogoRepository(BaseDbContext context) : IJogoRepository
 {
     public async Task<bool> ExisteJogoAtivoComNome(string nome)
     {
-        return await context.Jogos
-            .AnyAsync(j => j.Nome.Trim().Equals(nome.Trim(), StringComparison.CurrentCultureIgnoreCase) && j.Ativo);
+        return await context.Jogos.AnyAsync(x => x.Nome == nome && x.Ativo);
     }
 
     public async Task<Jogo?> ObterPorId(int id)

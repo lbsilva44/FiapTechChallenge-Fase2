@@ -14,7 +14,9 @@ public class UsuarioRepository(BaseDbContext context) : IUsuarioRepository
         await context.Usuarios.FirstOrDefaultAsync(u => u.Email.Valor == email);
 
     public async Task<Usuario?> ObterPorId(int id) =>
-        await context.Usuarios.FindAsync(id);
+        await context.Usuarios
+            .Include(u => u.Bibliotecas)
+            .FirstOrDefaultAsync(u => u.Id == id);
 
     public async Task<IEnumerable<Usuario>> ListarTodos() =>
         await context.Usuarios.AsNoTracking().ToListAsync();

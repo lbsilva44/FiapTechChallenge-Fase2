@@ -49,15 +49,25 @@ public class Usuario
     }
     private void Comprar(Jogo jogo, decimal valorASerDebitado)
     {
-        if (valorASerDebitado > Carteira.Saldo)
-            throw new InvalidOperationException("Saldo insuficiente.");
+        if (valorASerDebitado < 0)
+            throw new InvalidOperationException("Valor da compra não pode ser negativo.");
+
+        if (PossuiJogo(jogo.Id))
+            throw new InvalidOperationException("Usuário já possui este jogo.");
 
         var antes = Carteira.Saldo;
-        Carteira.Debitar(valorASerDebitado);
+
+        if (valorASerDebitado > 0)
+        {
+            if (!TemSaldoSuficiente(valorASerDebitado))
+                throw new InvalidOperationException("Saldo insuficiente.");
+
+            Carteira.Debitar(valorASerDebitado);
+        }
 
         _movimentos.Add(new MovimentoCarteira(
             usuarioId: Id,
-            tipo: TipoMovimentoCarteira.Retirada,
+            tipo: valorASerDebitado > 0 ? TipoMovimentoCarteira.Retirada : TipoMovimentoCarteira.RecebidoGratis,
             valor: valorASerDebitado,
             saldoAntes: antes,
             saldoDepois: Carteira.Saldo,
@@ -77,7 +87,7 @@ public class Usuario
     // Compra individual pelo preço original
     public void ComprarJogo(Jogo jogo)=> Comprar(jogo, jogo.Preco);
 
-    public void ComprarJogo(Jogo jogo, decimal valorPromocional)=> Comprar(jogo, valorPromocional);
+    public void ComprarPromocao(Jogo jogo, decimal valorPromocional)=> Comprar(jogo, valorPromocional);
 
     public bool TemSaldoSuficiente(decimal valor)
     {

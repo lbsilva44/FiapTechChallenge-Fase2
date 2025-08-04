@@ -90,7 +90,6 @@ public class JogoService(IJogoRepository jogoRepository, IUsuarioRepository usua
 
         usuario.ComprarJogo(jogo);
 
-        await bibliotecaRepository.Adicionar(new Biblioteca(usuario.Id, jogo.Id));
         await jogoRepository.SalvarAsync(); // Ou um UnitOfWork se você quiser centralizar os commits
 
     }

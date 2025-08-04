@@ -10,12 +10,10 @@ public class PromocaoRepository(BaseDbContext context) : IPromocaoRepository
 {
     public async Task<Promocao?> ObterPorIdAsync(int id, bool incluirJogos = false)
     {
-        var query = context.Promocoes.AsQueryable();
-
-        if (incluirJogos)
-            query = query.Include(p => p.Jogos).ThenInclude(pj => pj.Jogo);
-
-        return await query.FirstOrDefaultAsync(p => p.Id == id);
+        return await context.Promocoes
+            .Include(p => p.Jogos)
+                .ThenInclude(pj => pj.Jogo) // <- necessário para acessar `j.Jogo` depois
+            .FirstOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<IEnumerable<Promocao>> ListarAsync(bool somenteAtivas, bool isAdmin)
@@ -31,6 +29,7 @@ public class PromocaoRepository(BaseDbContext context) : IPromocaoRepository
     public async Task AdicionarAsync(Promocao promocao)
     {
         await context.AddAsync(promocao);
+        await context.SaveChangesAsync();
     }
 
     public Task RemoverAsync(Promocao promocao)

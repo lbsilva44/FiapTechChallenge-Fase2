@@ -14,7 +14,11 @@ public static class DependencyInjectionExtensions
         services.AddDbContext<BaseDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+        services.AddScoped<IUsuarioService, UsuarioService>();
+        services.AddScoped<IJogoService, JogoService>();
+        services.AddScoped<IPromocaoService, PromocaoService>();
         services.AddScoped<IJwtService, JwtService>();
+
         services.AddScoped<IUsuarioRepository, UsuarioRepository>();
         services.AddScoped<IPromocaoRepository, PromocaoRepository>();
         services.AddScoped<IBibliotecaRepository, BibliotecaRepository>();

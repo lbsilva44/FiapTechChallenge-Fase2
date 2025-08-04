@@ -134,7 +134,7 @@ public class PromocaoService(IPromocaoRepository promocaoRepository, IJogoReposi
 
         foreach (var jogo in jogosPendentes)
         {
-            usuario.ComprarJogo(jogo, promocao.CalcularPrecoComDesconto(jogo));
+            usuario.ComprarPromocao(jogo, promocao.CalcularPrecoComDesconto(jogo));
         }
 
         await usuarioRepository.SalvarAsync();
