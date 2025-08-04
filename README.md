@@ -65,7 +65,7 @@ Fiap.Cloud.Games.sln
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/lbsilva44/Fiap.Cloud.Games.git
+git clone https://github.com/lbsilva44/FiapTechChallenge-Fase2.git
 ```
 
 2. Configure `appsettings.json` em `Fiap.Cloud.Games.API`:
