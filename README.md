@@ -141,10 +141,10 @@ docker run -p 8080:80 fcg-app
 ## 📖 Documentação da API
 
 Swagger UI:  
-[https://fcg-tech-challenge.azurewebsites.net/swagger](https://fcg-tech-challenge.azurewebsites.net/swagger)
+https://fcg-tech-challenge-eac7hheqfne6bkbn.brazilsouth-01.azurewebsites.net/swagger/index.html
 
 ReDoc:  
-[https://fcg-tech-challenge.azurewebsites.net/docs](https://fcg-tech-challenge.azurewebsites.net/docs)
+https://fcg-tech-challenge-eac7hheqfne6bkbn.brazilsouth-01.azurewebsites.net/docs/index.html
 
 ---
 
@@ -252,15 +252,15 @@ dotnet test --logger "console;verbosity=detailed"
   https://hub.docker.com/r/lbsilva44/fcg-app
 
 - **Azure Web App (Deploy da API):**  
-  https://fcg-tech-challenge.azurewebsites.net
+  https://fcg-tech-challenge-eac7hheqfne6bkbn.brazilsouth-01.azurewebsites.net/swagger
 
 - **Repositório GitHub:**  
-  https://github.com/lbsilva44/Fiap.Cloud.Games
+  https://github.com/lbsilva44/FiapTechChallenge-Fase2.git
 
 ---
 
 **Autor:** Leonardo Silva  
-**Data de Entrega:** 03/08/2025  
+**Data de Entrega:** 04/08/2025  
 **Desafio:** Tech Challenge FIAP - Fase 2  
 **Grupo:** Fase 2 - Cloud Games
 
